@@ -35,6 +35,7 @@ build/
 # Environment variables / secrets
 .env
 .env.*
+!.env.example
 
 # Local config overrides (optional)
 application-local.properties
