@@ -138,6 +138,9 @@ public class ProjectService {
             UUID projectId
     ) {
 
+        // Same ownership check as getProject: throws unless the caller owns this project
+        getProject(projectId);
+
         long totalDocuments =
                 dataRecordRepository
                         .countByProjectId(projectId);
