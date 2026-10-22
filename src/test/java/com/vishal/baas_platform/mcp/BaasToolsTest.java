@@ -85,6 +85,14 @@ class BaasToolsTest {
     }
 
     @Test
+    void timestampsCarryATimezoneOffset() {
+        String out = BaasTools.timestamp(java.time.LocalDateTime.of(2026, 10, 23, 1, 22, 9));
+
+        assertThat(out).startsWith("2026-10-23T01:22:09").matches(".*([+-]\\d{2}:\\d{2}|Z)$");
+        assertThat(BaasTools.timestamp(null)).isNull();
+    }
+
+    @Test
     void whereFilterMatchesNumbersRegardlessOfType() {
         assertThat(BaasTools.matches(Map.of("count", 3L, "done", false), Map.of("count", 3, "done", false))).isTrue();
         assertThat(BaasTools.matches(Map.of("count", 3L), Map.of("count", 4))).isFalse();

@@ -12,7 +12,10 @@ import com.vishal.baas_platform.service.ProjectService;
 import com.vishal.baas_platform.service.SdkAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -126,8 +129,10 @@ public class BaasTools {
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("projectId", project.getId().toString());
         out.put("apiKey", project.getApiKey());
-        out.put("usage", "Send it as the x-api-key header. Write: POST /api/" + project.getId()
-                + "/{collection} with a JSON body. Read: GET /api/" + project.getId() + "/{collection}.");
+        String dataUrl = baseUrl() + "/api/" + project.getId() + "/{collection}";
+        out.put("baseUrl", baseUrl());
+        out.put("usage", "Send it as the x-api-key header. Write: POST " + dataUrl
+                + " with a JSON body. Read: GET " + dataUrl + ".");
         return out;
     }
 
@@ -253,7 +258,7 @@ public class BaasTools {
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("id", p.getId().toString());
         out.put("name", p.getName());
-        out.put("createdAt", String.valueOf(p.getCreatedAt()));
+        out.put("createdAt", timestamp(p.getCreatedAt()));
         return out;
     }
 
@@ -269,8 +274,22 @@ public class BaasTools {
         out.put("id", String.valueOf(record.getId()));
         out.put("collection", record.getCollectionName());
         out.put("data", record.getData());
-        out.put("createdAt", String.valueOf(record.getCreatedAt()));
+        out.put("createdAt", timestamp(record.getCreatedAt()));
         return out;
+    }
+
+    // Timestamps are stored as server-local LocalDateTime; give agents an unambiguous ISO-8601 value with offset
+    static String timestamp(LocalDateTime time) {
+        return time == null ? null : time.atZone(ZoneId.systemDefault()).toOffsetDateTime().toString();
+    }
+
+    // The URL the agent reached us on, so it can tell an app which host to call
+    private static String baseUrl() {
+        try {
+            return ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+        } catch (IllegalStateException e) {
+            return ""; // not inside an HTTP request (e.g. unit tests)
+        }
     }
 
     private static Map<String, Object> string(String description) {

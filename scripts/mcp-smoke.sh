@@ -41,7 +41,9 @@ echo "ok  insert_document + query_documents (with filter) + list_collections"
 
 call create_app_user "{\"project_id\":\"$ID\",\"name\":\"Ana\",\"email\":\"ana@example.com\",\"password\":\"secret123\"}" \
   | grep -q '"isError":false' || fail create_app_user
-KEY=$(call get_api_key "{\"project_id\":\"$ID\"}" | tr -d '\\' | field apiKey)
+K=$(call get_api_key "{\"project_id\":\"$ID\"}")
+echo "$K" | tr -d '\\' | grep -q "\"baseUrl\" : \"$BASE\"" || fail "get_api_key should include the base URL: $K"
+KEY=$(echo "$K" | tr -d '\\' | field apiKey)
 curl -sf -X POST "$BASE/sdk/auth/login" -H "x-api-key: $KEY" -H 'Content-Type: application/json' \
   -d '{"email":"ana@example.com","password":"secret123"}' | grep -q token || fail "app user login with the key"
 curl -sf "$BASE/api/$ID/todos" -H "x-api-key: $KEY" | grep -q 'ship MCP' || fail "data API with the key"
