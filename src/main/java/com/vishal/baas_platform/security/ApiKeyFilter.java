@@ -33,9 +33,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         String apiKey = request.getHeader("x-api-key");
 
-        System.out.println("REQUEST PATH: " + path);
-        System.out.println("API KEY RECEIVED: " + apiKey);
-
         if (apiKey == null || apiKey.isBlank()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Missing API Key");
@@ -46,11 +43,19 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                 .findByApiKey(apiKey)
                 .orElse(null);
 
-        System.out.println("PROJECT FOUND: " + project);
-
         if (project == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid API Key");
+            return;
+        }
+
+        // A key only grants access to its own project: /api/{projectId}/...
+        String[] segments = path.split("/");
+        String requestedProjectId = segments.length > 2 ? segments[2] : "";
+
+        if (!project.getId().toString().equalsIgnoreCase(requestedProjectId)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("API Key does not belong to this project");
             return;
         }
 
