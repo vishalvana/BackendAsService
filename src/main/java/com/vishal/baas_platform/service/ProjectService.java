@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -89,6 +90,27 @@ public class ProjectService {
                 .apiKey(project.getApiKey())
                 .createdAt(project.getCreatedAt())
                 .build();
+    }
+
+    // Used by the MCP create_project tool so an agent can re-run setup without making duplicates
+    public Optional<ProjectResponse> findMyProjectByName(String name) {
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new CustomException("User not found"));
+
+        return projectRepository.findFirstByOwnerAndNameIgnoreCase(user, name.trim())
+                .map(project -> ProjectResponse.builder()
+                        .id(project.getId())
+                        .name(project.getName())
+                        .apiKey(project.getApiKey())
+                        .createdAt(project.getCreatedAt())
+                        .build());
     }
 
     public List<ProjectResponse> getMyProjects(){

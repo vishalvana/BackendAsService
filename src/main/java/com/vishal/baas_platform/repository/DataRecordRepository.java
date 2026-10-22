@@ -26,6 +26,14 @@ WHERE d.projectId = :projectId
 """)
     long countDistinctCollections(UUID projectId);
 
+    @Query("""
+SELECT DISTINCT d.collectionName
+FROM DataRecord d
+WHERE d.projectId = :projectId
+ORDER BY d.collectionName
+""")
+    List<String> findCollectionNames(UUID projectId);
+
     List<DataRecord> findByProjectIdAndCollectionName(
             UUID projectId,
             String collectionName

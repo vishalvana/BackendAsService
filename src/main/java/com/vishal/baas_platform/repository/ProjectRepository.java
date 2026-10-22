@@ -13,4 +13,5 @@ public interface ProjectRepository
     long countByOwner(User owner);
     List<Project> findByOwner(User owner);
     Optional<Project> findByApiKey(String apiKey);
+    Optional<Project> findFirstByOwnerAndNameIgnoreCase(User owner, String name);
 }
