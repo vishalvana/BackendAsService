@@ -8,8 +8,42 @@ The platform is designed around modern backend engineering principles such as st
 
 ---
 
+# Let an AI agent build your backend (MCP)
+
+The API also speaks [MCP](https://modelcontextprotocol.io), so Claude (or any MCP client) can set up a backend for you: tell it *"create a backend for my todo app with a few sample todos and a test user"* and it creates the project, collections, data and users.
+
+**1. Get a developer token** (sign up once with `POST /auth/signup`, then log in):
+
+```bash
+curl -X POST http://localhost:8080/auth/login -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"your-password"}'
+```
+
+**2. Connect Claude Code** with the token from the response:
+
+```bash
+claude mcp add --transport http baas http://localhost:8080/mcp --header "Authorization: Bearer <token>"
+```
+
+Tokens last 24 hours; log in again and re-add the server when one expires.
+
+| Tool | What it does |
+|---|---|
+| `list_projects` | Your projects |
+| `create_project` | New project + API key. Safe to retry: an existing project with the same name is returned, not duplicated |
+| `get_api_key` | A project's API key and how to call the data API with it |
+| `list_collections` | Collections, document count and app-user count for a project |
+| `insert_document` | Store a JSON document (collections are created on first insert) |
+| `query_documents` | Read a collection, newest first, with an optional exact-match filter |
+| `create_app_user` | Register an end user of your app |
+
+Every tool runs as the developer who owns the token, and only works on that developer's projects. `scripts/mcp-smoke.sh` checks the whole flow end to end.
+
+---
+
 # Table of Contents
 
+* Let an AI agent build your backend (MCP)
 * Overview
 * Core Features
 * System Architecture
