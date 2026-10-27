@@ -74,6 +74,28 @@ class ApiKeyFilterTest {
     }
 
     @Test
+    void corsPreflightPassesWithoutKey() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("OPTIONS", "/api/" + projectId + "/todos");
+        request.addHeader("Origin", "http://localhost:5173");
+        request.addHeader("Access-Control-Request-Method", "GET");
+        MockFilterChain chain = new MockFilterChain();
+        filter.doFilter(request, new MockHttpServletResponse(), chain);
+
+        assertThat(chain.getRequest()).isNotNull();
+    }
+
+    @Test
+    void plainOptionsStillNeedsKey() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("OPTIONS", "/api/" + projectId + "/todos");
+        MockFilterChain chain = new MockFilterChain();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        filter.doFilter(request, response, chain);
+
+        assertThat(response.getStatus()).isEqualTo(401);
+        assertThat(chain.getRequest()).isNull();
+    }
+
+    @Test
     void keyCanAccessItsOwnProject() throws Exception {
         MockFilterChain chain = new MockFilterChain();
         MockHttpServletResponse response = run("/api/" + projectId + "/todos", "key-a", chain);

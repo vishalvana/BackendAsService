@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -26,7 +27,8 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        if (!path.startsWith("/api/")) {
+        // Browsers send a CORS preflight without custom headers; let the CORS filter answer it
+        if (!path.startsWith("/api/") || CorsUtils.isPreFlightRequest(request)) {
             filterChain.doFilter(request, response);
             return;
         }
