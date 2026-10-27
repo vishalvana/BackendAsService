@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BackendAsService</title>
+<meta name="description" content="An agent-first Backend-as-a-Service: Claude sets up your backend over MCP.">
+<style>
+  :root {
+    --bg: #0b0e15; --panel: #121722; --line: #232a3a; --fg: #e8ebf3; --muted: #9aa3b8;
+    --accent: #ff7a1a; --green: #3ddc97;
+    --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 56px 16px 72px; }
+  .kicker { font: 13px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-size: clamp(32px, 6vw, 46px); line-height: 1.1; margin: 10px 0 14px; letter-spacing: -.02em; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lead { color: var(--muted); font-size: 18px; margin: 0 0 28px; }
+  .status { display: inline-flex; align-items: center; gap: 8px; font: 14px var(--mono); color: var(--muted); margin-bottom: 36px; }
+  .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  h2 { font-size: 20px; margin: 36px 0 12px; }
+  ol { padding: 0; margin: 0; list-style: none; display: grid; gap: 12px; counter-reset: s; }
+  li { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; counter-increment: s; }
+  li b::before { content: counter(s) " · "; color: var(--accent); }
+  pre { margin: 10px 0 0; padding: 12px 14px; background: #070a10; border: 1px solid var(--line); border-radius: 8px;
+        overflow-x: auto; font: 13.5px/1.55 var(--mono); color: #cdd3e0; }
+  .note { color: var(--muted); font-size: 14px; margin-top: 20px; }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  a { color: var(--fg); }
+  .links a { text-decoration: none; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); }
+  .links a:hover, .links a:focus-visible { border-color: var(--accent); }
+  .links a.primary { background: var(--accent); border-color: var(--accent); color: #140a02; font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Build in public · open source</div>
+  <h1>A backend <em>AI agents</em> can set up for you.</h1>
+  <p class="lead">BackendAsService is a Spring Boot + PostgreSQL Backend-as-a-Service that speaks MCP.
+    Tell Claude what your app needs and it creates the project, collections, sample data and test users.</p>
+  <div class="status"><i></i>Demo server is up · this page is all there is to see in a browser; the rest is an API</div>
+
+  <h2>Try it in 3 steps</h2>
+  <ol>
+    <li><b>Get a developer token</b> (sign up once, then log in)
+<pre>curl -X POST https://baas-demo.onrender.com/auth/signup -H 'Content-Type: application/json' \
+  -d '{"name":"You","email":"you@example.com","password":"your-password"}'
+curl -X POST https://baas-demo.onrender.com/auth/login -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"your-password"}'</pre></li>
+    <li><b>Connect Claude Code</b> with the token from the login response
+<pre>claude mcp add --transport http baas https://baas-demo.onrender.com/mcp \
+  --header "Authorization: Bearer &lt;token&gt;"</pre></li>
+    <li><b>Ask Claude</b>, in an empty folder
+<pre>Create a backend for my book club app with sample data and a test user.</pre></li>
+  </ol>
+  <p class="note">This is a free demo server: it sleeps when idle, so the first request can take up to a minute.
+    Tokens last 24 hours. Don't store anything private here.</p>
+
+  <div class="links">
+    <a class="primary" href="https://github.com/vishalvana/BackendAsService">Code and docs on GitHub</a>
+    <a href="/swagger-ui.html">API reference</a>
+    <a href="https://vishalvana.vercel.app">Made by Vishal Vana</a>
+  </div>
+</main>
+</body>
+</html>
