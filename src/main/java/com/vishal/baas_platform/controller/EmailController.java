@@ -5,10 +5,13 @@ import com.vishal.baas_platform.service.EmailService;
 import com.vishal.baas_platform.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
+// Off when baas.mail.enabled=false (e.g. the public demo, which has no mail account)
+@ConditionalOnProperty(name = "baas.mail.enabled", havingValue = "true", matchIfMissing = true)
 @RestController
 @RequestMapping("/email")
 @RequiredArgsConstructor
