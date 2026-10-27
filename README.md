@@ -12,20 +12,26 @@ The platform is designed around modern backend engineering principles such as st
 
 The API also speaks [MCP](https://modelcontextprotocol.io), so Claude (or any MCP client) can set up a backend for you: tell it *"create a backend for my todo app with a few sample todos and a test user"* and it creates the project, collections, data and users.
 
-**1. Get a developer token** (sign up once with `POST /auth/signup`, then log in):
+**Try it on the live demo server**, `https://baas-demo.onrender.com` (free tier: the first request after a quiet spell takes up to a minute while it wakes up). Running your own copy? Use `http://localhost:8080` instead.
+
+**1. Get a developer token** (sign up once, then log in):
 
 ```bash
-curl -X POST http://localhost:8080/auth/login -H 'Content-Type: application/json' \
+curl -X POST https://baas-demo.onrender.com/auth/signup -H 'Content-Type: application/json' \
+  -d '{"name":"You","email":"you@example.com","password":"your-password"}'
+curl -X POST https://baas-demo.onrender.com/auth/login -H 'Content-Type: application/json' \
   -d '{"email":"you@example.com","password":"your-password"}'
 ```
 
 **2. Connect Claude Code** with the token from the response:
 
 ```bash
-claude mcp add --transport http baas http://localhost:8080/mcp --header "Authorization: Bearer <token>"
+claude mcp add --transport http baas https://baas-demo.onrender.com/mcp --header "Authorization: Bearer <token>"
 ```
 
-Tokens last 24 hours; log in again and re-add the server when one expires.
+**3. Ask Claude** in an empty folder: *"Create a backend for my book club app with sample data and a test user."*
+
+Tokens last 24 hours; log in again and re-add the server when one expires. The demo server is for trying things out: don't store anything private there.
 
 | Tool | What it does |
 |---|---|
